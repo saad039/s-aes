@@ -41,7 +41,6 @@ template <std::size_t rounds>
 void aes128_load_key(const uint8_t* enc_key, __m128i* key_schedule) {
     key_schedule[0] = _mm_loadu_si128((const __m128i*)enc_key);
 
-    // explicit loop unrolling to enable forwarding in pipeline
     if constexpr (rounds == 4) {
         // key schedule for encryption
         key_schedule[1] = AES_128_key_exp(key_schedule[0], 0x01);
@@ -53,9 +52,7 @@ void aes128_load_key(const uint8_t* enc_key, __m128i* key_schedule) {
         key_schedule[5] = _mm_aesimc_si128(key_schedule[3]);
         key_schedule[6] = _mm_aesimc_si128(key_schedule[2]);
         key_schedule[7] = _mm_aesimc_si128(key_schedule[1]);
-    }
-    // explicit loop unrolling to enable forwarding in pipeline
-    else // incase of 10 rounds
+    } else // incase of 10 rounds
     {
         // key schedule for encryption
         key_schedule[1] = AES_128_key_exp(key_schedule[0], 0x01);
@@ -94,7 +91,6 @@ void aes128_encrypt(const uint8_t* plainText, uint8_t* out, size_t length, __m12
 
         temp = _mm_loadu_si128(&((__m128i*)plainText)[i]);
         temp = _mm_xor_si128(temp, key_schedule[0]);
-        // explicit loop unrolling to enable forwarding in pipeline
         if constexpr (rounds == 4) {
             temp = _mm_aesenc_si128(temp, key_schedule[1]);
             temp = _mm_aesenc_si128(temp, key_schedule[2]);
@@ -126,7 +122,6 @@ void aes128_decrypt(uint8_t* cipherText, uint8_t* out, size_t length, __m128i* k
 
     for (int i = 0; i < length; i++) {
         temp = _mm_loadu_si128(&((__m128i*)cipherText)[i]);
-        // explicit loop unrolling to enable forwarding in pipeline
         if constexpr (rounds == 4) {
 
             temp = _mm_xor_si128(temp, key_schedule[4]);
