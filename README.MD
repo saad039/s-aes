@@ -18,7 +18,7 @@ Use [premake ](https://premake.github.io/) to build this project. To build, simp
 ```bash
 premake5 <target>
 ```
-where *target* is **gmake** for unix makefiles or *vs2019* for **visual studio 2019 solution files**. For more information about premake, checkout the official documentation.
+where *target* is **gmake** for *unix* makefiles or **vs2019** for *visual studio 2019 solution files*. For more information about premake, checkout the official documentation.
 
 ## Usage
 
